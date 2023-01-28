@@ -12,9 +12,9 @@ def get_from_api():
     write_response_to_file(json_response)
 
 
-def write_response_to_file(entry):
-    file = open("responses.json", "a+")
-    file.write(str(json.dumps(entry) + '\n'))
+def write_response_to_file(response):
+    file = open("responses.json", "w+")  # May need to mess around with appropriate privileges
+    file.write(str(json.dumps(response, indent=4)))
     file.close()
 
 
