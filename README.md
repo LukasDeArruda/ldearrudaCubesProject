@@ -1,7 +1,8 @@
 Lukas DeArruda 
 COMP 490 Project 1 Sprint 1
 
-Need to install requests
+Need to install requests, and create a file called secrets.py that 
+contains api_key
 
 This project grabs data from a specified API in json format and saves it to a local file
 
