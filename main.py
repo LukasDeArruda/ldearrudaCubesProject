@@ -1,15 +1,18 @@
+import sys
 from requests.auth import HTTPBasicAuth
 import requests
 import json
 from secrets import api_key
 
-url = 'https://lukasdearruda.wufoo.com/api/v3/forms/cubes-project-proposal-submission/entries.json'
 
-
-def get_from_api():
+def get_from_api(url):
     entry = requests.get(url, auth=HTTPBasicAuth(api_key, 'pass'))
+    if entry.status_code != 200:
+        print(f"Failed to get data, response code: {entry.status_code} and error message: {entry.reason}")
+        sys.exit(-1)
     json_response = entry.json()
-    write_response_to_file(json_response)
+    return json_response
+    # write_response_to_file(json_response)
 
 
 def write_response_to_file(response):
@@ -18,8 +21,15 @@ def write_response_to_file(response):
     file.close()
 
 
+def test_url():
+    url = 'https://lukasdearruda.wufoo.com/api/v3/forms/cubes-project-proposal-submission/entries.json'
+    assert get_from_api(url)
+
+
 def main():
-    get_from_api()
+    url = 'https://lukasdearruda.wufoo.com/api/v3/forms/cubes-project-proposal-submission/entries.json'
+    response = get_from_api(url)
+    write_response_to_file(response)
 
 
 if __name__ == '__main__':
