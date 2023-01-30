@@ -21,11 +21,6 @@ def write_response_to_file(response):
     file.close()
 
 
-def test_url():
-    url = 'https://lukasdearruda.wufoo.com/api/v3/forms/cubes-project-proposal-submission/entries.json'
-    assert get_from_api(url)
-
-
 def main():
     url = 'https://lukasdearruda.wufoo.com/api/v3/forms/cubes-project-proposal-submission/entries.json'
     response = get_from_api(url)
