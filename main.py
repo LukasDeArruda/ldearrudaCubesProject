@@ -3,6 +3,8 @@ from requests.auth import HTTPBasicAuth
 import requests
 import json
 from secrets import api_key
+import database_setup
+import sqlite3
 
 
 def get_from_api(url):
@@ -22,9 +24,13 @@ def write_response_to_file(response):
 
 
 def main():
-    url = 'https://lukasdearruda.wufoo.com/api/v3/forms/cubes-project-proposal-submission/entries.json'
-    response = get_from_api(url)
-    write_response_to_file(response)
+    connection, cursor = database_setup.open_db("responses.db")
+    cursor.execute("""CREATE TABLE IF NOT EXISTS response(entryNum, prefix, fName, lName, title, orgName, email, orgSite,
+    phoneNum, opportunities, collabTime, permission )""")
+    database_setup.close_db(connection)
+    # url = 'https://lukasdearruda.wufoo.com/api/v3/forms/cubes-project-proposal-submission/entries.json'
+    # response = get_from_api(url)
+    # write_response_to_file(response)
 
 
 if __name__ == '__main__':
