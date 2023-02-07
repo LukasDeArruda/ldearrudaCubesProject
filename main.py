@@ -21,6 +21,7 @@ def write_response_to_file(response):
     file = open("responses.txt", "w+")  # May need to mess around with appropriate privileges
     # file.write(str(json.dumps(response, indent=4)))
     # file.write(str(response))
+    # comment to test workflow
     file.close()
 
 
