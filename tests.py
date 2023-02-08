@@ -18,11 +18,10 @@ def test_database():
                      }]}
 
     connection, cursor = database_setup.open_db("testdb.db")
-    cursor.execute("""CREATE TABLE IF NOT EXISTS testTable(entryNum PRIMARY KEY , prefix, fName, lName, title, orgName,
+    cursor.execute("""CREATE TABLE IF NOT EXISTS responses(entryNum PRIMARY KEY , prefix, fName, lName, title, orgName,
             email, orgSite, phoneNum, opportunities, collabTime, permission)""")
     database_setup.write_response_to_database(test_response, cursor)
     connection.commit()
-    query = cursor.execute("""SELECT * FROM testTable WHERE entryNum = 1""")
-    print(query)
+    cursor.execute("""SELECT * FROM responses WHERE entryNum = 1""")
     database_setup.close_db(connection)
-
+1

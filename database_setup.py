@@ -18,7 +18,7 @@ def write_response_to_database(response, cursor):
     for i in range(len(values)):
         entry_responses = list(values[i].values())  # get the values for the next entry
         try:
-            cursor.execute("""INSERT INTO responses (entryNum, prefix, fName, lName, title, orgName, email,
+            cursor.execute("""INSERT INTO responses(entryNum, prefix, fName, lName, title, orgName, email,
             orgSite, phoneNum, opportunities, collabTime, permission) VALUES (?,?,?,?,?,?,?,?,?,?,?,?) """,
                        (entry_responses[0], entry_responses[1], entry_responses[2], entry_responses[3],
                         entry_responses[4], entry_responses[5], entry_responses[6], entry_responses[7],
