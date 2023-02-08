@@ -2,13 +2,6 @@ import sqlite3
 from typing import Tuple
 
 
-def create_database(filename: str):
-    connection, cursor = open_db(filename + ".db")
-    cursor.execute("""CREATE TABLE IF NOT EXISTS responses(entryNum PRIMARY KEY , prefix, fName, lName, title, orgName, email,
-        orgSite, phoneNum, opportunities, collabTime, permission)""")
-    return connection, cursor
-
-
 def open_db(filename: str) -> Tuple[sqlite3.Connection, sqlite3.Cursor]:
     db_connection = sqlite3.connect(filename)
     cursor = db_connection.cursor()
