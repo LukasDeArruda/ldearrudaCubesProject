@@ -5,7 +5,7 @@ import json
 from secrets import api_key
 import database_setup
 from PySide6 import QtCore, QtWidgets, QtGui
-
+import UI
 
 def get_from_api(url):
     entry = requests.get(url, auth=HTTPBasicAuth(api_key, 'pass'))
@@ -33,10 +33,10 @@ def main():
     connection.commit()
     database_setup.close_db(connection)
 
-    # app = QtWidgets.QApplication()
-    # main_window = UI.Window()
-    # main_window.show()
-    # sys.exit(app.exec())
+    app = QtWidgets.QApplication()
+    main_window = UI.Window()
+    main_window.show()
+    sys.exit(app.exec())
 
 
 if __name__ == '__main__':

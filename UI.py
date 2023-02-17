@@ -4,9 +4,57 @@ from PySide6.QtWidgets import *
 import sys
 
 
-class MockupWindow(QtWidgets.QWidget):
+class Window(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
+
+        self.prefix_label = QLabel("Prefix: ")
+        self.prefix_box = QLineEdit()
+
+        self.fname_label = QLabel("First Name: ")
+        self.fname_box = QLineEdit()
+
+        self.lname_label = QLabel("Last Name: ")
+        self.lname_box = QLineEdit()
+
+        self.title_label = QLabel("Title: ")
+        self.title_box = QLineEdit()
+
+        self.org_label = QLabel("Organization: ")
+        self.org_box = QLineEdit()
+
+        self.email_label = QLabel("Email: ")
+        self.email_box = QLineEdit()
+
+        self.org_site_label = QLabel("Organization Site: ")
+        self.org_site_box = QLineEdit()
+
+        self.phone_num_label = QLabel("Phone Number: ")
+        self.phone_num_box = QLineEdit()
+
+        self.opportunites_label = QLabel("Opportunities: ")
+
+        self.course_project_box = QCheckBox("Course Project")
+        self.guest_speaker_box = QCheckBox("Guest Speaker")
+        self.site_visit_box = QCheckBox("Site Visit")
+        self.job_shadow_box = QCheckBox("Job Shadow")
+        self.internships_box = QCheckBox("Internships")
+        self.career_panel_box = QCheckBox("Career Panel")
+        self.career_panel_box = QCheckBox("Career Panel")
+        self.networking_event_box = QCheckBox("Networking Event")
+
+        self.collab_time_label = QLabel("Collaboration Time:")
+
+        self.sum2022_box = QCheckBox("Summer 2022")
+        self.fall2022_box = QCheckBox("Fall 2022")
+        self.spr2023_box = QCheckBox("Spring 2023")
+        self.sum2023_box = QCheckBox("Summer 2023")
+        self.other_box = QCheckBox("Other")
+
+        self.permission_label = QLabel("Permission to use organization name?")
+        self.yes_button = QRadioButton("Yes")
+        self.no_button = QRadioButton("No")
+
         self.create_ui()
 
     def create_ui(self):
@@ -21,97 +69,70 @@ class MockupWindow(QtWidgets.QWidget):
         nav_buttons.addStretch(1)  # This sets the size of the button within the box
         nav_buttons.addWidget(quit_button)
 
-        prefix_label = QLabel("Prefix: ")
-        prefix_box = QLineEdit()
-        prefix_box.setReadOnly(True)
-        prefix_box.setText("Prefix")
+        # Set all boxes to read only, and fill with placeholder text
+        self.prefix_box.setReadOnly(True)
+        self.prefix_box.setText("Prefix")
 
-        fname_label = QLabel("First Name: ")
-        fname_box = QLineEdit()
-        fname_box.setReadOnly(True)
-        fname_box.setText("First Name")
+        self.fname_box.setReadOnly(True)
+        self.fname_box.setText("First Name")
 
-        lname_label = QLabel("Last Name: ")
-        lname_box = QLineEdit()
-        lname_box.setReadOnly(True)
-        lname_box.setText("Last Name")
+        self.lname_box.setReadOnly(True)
+        self.lname_box.setText("Last Name")
 
-        title_label = QLabel("Title: ")
-        title_box = QLineEdit()
-        title_box.setReadOnly(True)
-        title_box.setText("Title")
+        self.title_box.setReadOnly(True)
+        self.title_box.setText("Title")
 
-        org_label = QLabel("Organization: ")
-        org_box = QLineEdit()
-        org_box.setReadOnly(True)
-        org_box.setText("Organization")
+        self.org_box.setReadOnly(True)
+        self.org_box.setText("Organization")
 
-        email_label = QLabel("Email: ")
-        email_box = QLineEdit()
-        email_box.setReadOnly(True)
-        email_box.setText("Email Address")
+        self.email_box.setReadOnly(True)
+        self.email_box.setText("Email Address")
 
-        org_site_label = QLabel("Organization Site: ")
-        org_site_box = QLineEdit()
-        org_site_box.setReadOnly(True)
-        org_site_box.setText("Organization Site")
+        self.org_site_box.setReadOnly(True)
+        self.org_site_box.setText("Organization Site")
 
-        phone_num_label = QLabel("Phone Number: ")
-        phone_num_box = QLineEdit()
-        phone_num_box.setReadOnly(True)
-        phone_num_box.setText("Phone Number")
+        self.phone_num_box.setReadOnly(True)
+        self.phone_num_box.setText("Phone Number")
 
-        opportunites_label = QLabel("Opportunities: ")
-
+        # Create a container to hold opportunities
         checkbox_box = QGridLayout()
-        course_project_box = QCheckBox("Course Project")
-        course_project_box.setDisabled(True)
-        guest_speaker_box = QCheckBox("Guest Speaker")
-        guest_speaker_box.setDisabled(True)
-        site_visit_box = QCheckBox("Site Visit")
-        site_visit_box.setDisabled(True)
-        job_shadow_box = QCheckBox("Job Shadow")
-        job_shadow_box.setDisabled(True)
-        internships_box = QCheckBox("Internships")
-        internships_box.setDisabled(True)
-        career_panel_box = QCheckBox("Career Panel")
-        career_panel_box.setDisabled(True)
-        networking_event_box = QCheckBox("Networking Event")
-        networking_event_box.setDisabled(True)
+        # Add them to the layout
+        checkbox_box.addWidget(self.course_project_box, 0, 0)
+        checkbox_box.addWidget(self.guest_speaker_box, 1, 0)
+        checkbox_box.addWidget(self.site_visit_box, 2, 0)
+        checkbox_box.addWidget(self.job_shadow_box, 3, 0)
+        checkbox_box.addWidget(self.internships_box, 4, 0)
+        checkbox_box.addWidget(self.career_panel_box, 5, 0)
+        checkbox_box.addWidget(self.networking_event_box, 6, 0)
 
-        checkbox_box.addWidget(course_project_box, 0, 0)
-        checkbox_box.addWidget(guest_speaker_box, 1, 0)
-        checkbox_box.addWidget(site_visit_box, 2, 0)
-        checkbox_box.addWidget(job_shadow_box, 3, 0)
-        checkbox_box.addWidget(internships_box, 4, 0)
-        checkbox_box.addWidget(career_panel_box, 5, 0)
-        checkbox_box.addWidget(networking_event_box, 6, 0)
+        # Set disabled so they can't be changed
+        self.course_project_box.setDisabled(True)
+        self.guest_speaker_box.setDisabled(True)
+        self.site_visit_box.setDisabled(True)
+        self.job_shadow_box.setDisabled(True)
+        self.internships_box.setDisabled(True)
+        self.career_panel_box.setDisabled(True)
+        self.networking_event_box.setDisabled(True)
 
-        collab_time_label = QLabel("Collaboration Time:")
-
+        # Box to hold all elements for collaboration time checkbox
         collab_time_box = QGridLayout()
-        sum2022_box = QCheckBox("Summer 2022")
-        sum2022_box.setDisabled(True)
-        fall2022_box = QCheckBox("Fall 2022")
-        fall2022_box.setDisabled(True)
-        spr2023_box = QCheckBox("Spring 2023")
-        spr2023_box.setDisabled(True)
-        sum2023_box = QCheckBox("Summer 2023")
-        sum2023_box.setDisabled(True)
-        other_box = QCheckBox("Other")
-        other_box.setDisabled(True)
 
-        collab_time_box.addWidget(sum2022_box, 0, 0)
-        collab_time_box.addWidget(fall2022_box, 1, 0)
-        collab_time_box.addWidget(spr2023_box, 2, 0)
-        collab_time_box.addWidget(sum2023_box, 3, 0)
-        collab_time_box.addWidget(other_box, 4, 0)
+        # Adding elements to layout
+        collab_time_box.addWidget(self.sum2022_box, 0, 0)
+        collab_time_box.addWidget(self.fall2022_box, 1, 0)
+        collab_time_box.addWidget(self.spr2023_box, 2, 0)
+        collab_time_box.addWidget(self.sum2023_box, 3, 0)
+        collab_time_box.addWidget(self.other_box, 4, 0)
 
-        permission_label = QLabel("Permission to use organization name?")
-        yes_button = QRadioButton("Yes")
-        yes_button.setDisabled(True)
-        no_button = QRadioButton("No")
-        no_button.setDisabled(True)
+        # Setting checkboxes to be disabled so they can't be modified
+        self.sum2022_box.setDisabled(True)
+        self.fall2022_box.setDisabled(True)
+        self.spr2023_box.setDisabled(True)
+        self.sum2023_box.setDisabled(True)
+        self.other_box.setDisabled(True)
+
+        self.yes_button.setDisabled(True)
+        self.no_button.setDisabled(True)
 
         # List that will hold the brief entry description
         entry_list = QVBoxLayout()
@@ -119,41 +140,41 @@ class MockupWindow(QtWidgets.QWidget):
         for i in range(10):
             button_list[i] = QPushButton("Test " + str(i))
             entry_list.addWidget(button_list[i])
-            button_list[i].clicked.connect(self.button_clicked)
+            button_list[i].clicked.connect(self.show_full_information)
 
         # Will hold the details of one selected layout
         detailed_entry = QVBoxLayout()
         name_and_title_info = QGridLayout()
 
-        name_and_title_info.addWidget(prefix_label, 0, 0)
-        name_and_title_info.addWidget(prefix_box, 0, 1)
-        name_and_title_info.addWidget(title_label, 0, 2)
-        name_and_title_info.addWidget(title_box, 0, 3)
+        name_and_title_info.addWidget(self.prefix_label, 0, 0)
+        name_and_title_info.addWidget(self.prefix_box, 0, 1)
+        name_and_title_info.addWidget(self.title_label, 0, 2)
+        name_and_title_info.addWidget(self.title_box, 0, 3)
 
-        name_and_title_info.addWidget(fname_label, 1, 0)
-        name_and_title_info.addWidget(fname_box, 1, 1)
-        name_and_title_info.addWidget(lname_label, 1, 2)
-        name_and_title_info.addWidget(lname_box, 1, 3)
+        name_and_title_info.addWidget(self.fname_label, 1, 0)
+        name_and_title_info.addWidget(self.fname_box, 1, 1)
+        name_and_title_info.addWidget(self.lname_label, 1, 2)
+        name_and_title_info.addWidget(self.lname_box, 1, 3)
 
-        name_and_title_info.addWidget(org_label, 2, 0)
-        name_and_title_info.addWidget(org_box, 2, 1)
-        name_and_title_info.addWidget(org_site_label, 2, 2)
-        name_and_title_info.addWidget(org_site_box, 2, 3)
+        name_and_title_info.addWidget(self.org_label, 2, 0)
+        name_and_title_info.addWidget(self.org_box, 2, 1)
+        name_and_title_info.addWidget(self.org_site_label, 2, 2)
+        name_and_title_info.addWidget(self.org_site_box, 2, 3)
 
-        name_and_title_info.addWidget(email_label, 3, 0)
-        name_and_title_info.addWidget(email_box, 3, 1)
-        name_and_title_info.addWidget(phone_num_label, 3, 2)
-        name_and_title_info.addWidget(phone_num_box, 3, 3)
+        name_and_title_info.addWidget(self.email_label, 3, 0)
+        name_and_title_info.addWidget(self.email_box, 3, 1)
+        name_and_title_info.addWidget(self.phone_num_label, 3, 2)
+        name_and_title_info.addWidget(self.phone_num_box, 3, 3)
 
-        name_and_title_info.addWidget(opportunites_label, 4, 0)
+        name_and_title_info.addWidget(self.opportunites_label, 4, 0)
         name_and_title_info.addLayout(checkbox_box, 5, 1)
 
-        name_and_title_info.addWidget(collab_time_label, 4, 2)
+        name_and_title_info.addWidget(self.collab_time_label, 4, 2)
         name_and_title_info.addLayout(collab_time_box, 5, 3)
 
-        name_and_title_info.addWidget(permission_label, 7, 0)
-        name_and_title_info.addWidget(yes_button, 8, 1)
-        name_and_title_info.addWidget(no_button, 8, 2)
+        name_and_title_info.addWidget(self.permission_label, 7, 0)
+        name_and_title_info.addWidget(self.yes_button, 8, 1)
+        name_and_title_info.addWidget(self.no_button, 8, 2)
 
         # Container to hold the two halves of the menu interface
         main_list_container = QHBoxLayout()
@@ -172,19 +193,20 @@ class MockupWindow(QtWidgets.QWidget):
 
         self.setLayout(v_box)
 
-    def button_clicked(self):
+    def show_full_information(self):
         # the plan is to use the information we put into the button label in order to create
         # an sql query to get the rest of the data
 
         # use QCheckBox.setChecked(True) to toggle boxes
+        self.prefix_box.setText("Updated")
+        self.fname_box.setText("Updated")
+        self.lname_box.setText("Updated")
+        self.title_box.setText("Updated")
+        self.org_box.setText("Updated")
+        self.email_box.setText("Updated")
+        self.org_site_box.setText("Updated")
+        self.phone_num_box.setText("Updated")
+        self.course_project_box.setChecked(True)
+        self.sum2022_box.setChecked(True)
+        self.yes_button.setChecked(True)
         print(self.sender().text())
-
-
-def main():
-    app = QtWidgets.QApplication()
-    main_window = MockupWindow()
-    main_window.show()
-    sys.exit(app.exec())
-
-
-main()
