@@ -1,12 +1,18 @@
+import sqlite3
+
 from PySide6 import QtCore, QtWidgets, QtGui
 from PySide6.QtWidgets import *
 # When finished, change import * to individually import elements
 import sys
+import sqlite3
 
 
 class Window(QtWidgets.QWidget):
-    def __init__(self):
+    def __init__(self, connection: sqlite3.Connection, cursor: sqlite3.Cursor):
         super().__init__()
+
+        self.db_connection = connection
+        self.db_cursor = cursor
 
         self.prefix_label = QLabel("Prefix: ")
         self.prefix_box = QLineEdit()
@@ -32,7 +38,7 @@ class Window(QtWidgets.QWidget):
         self.phone_num_label = QLabel("Phone Number: ")
         self.phone_num_box = QLineEdit()
 
-        self.opportunites_label = QLabel("Opportunities: ")
+        self.opportunities_label = QLabel("Opportunities: ")
 
         self.course_project_box = QCheckBox("Course Project")
         self.guest_speaker_box = QCheckBox("Guest Speaker")
@@ -51,9 +57,10 @@ class Window(QtWidgets.QWidget):
         self.sum2023_box = QCheckBox("Summer 2023")
         self.other_box = QCheckBox("Other")
 
-        self.permission_label = QLabel("Permission to use organization name?")
+        self.permission_label_1 = QLabel("Permission to use organization name?")
         self.yes_button = QRadioButton("Yes")
         self.no_button = QRadioButton("No")
+        self.further_discussion_button = QRadioButton("Further discussion is needed")
 
         self.create_ui()
 
@@ -71,28 +78,13 @@ class Window(QtWidgets.QWidget):
 
         # Set all boxes to read only, and fill with placeholder text
         self.prefix_box.setReadOnly(True)
-        self.prefix_box.setText("Prefix")
-
         self.fname_box.setReadOnly(True)
-        self.fname_box.setText("First Name")
-
         self.lname_box.setReadOnly(True)
-        self.lname_box.setText("Last Name")
-
         self.title_box.setReadOnly(True)
-        self.title_box.setText("Title")
-
         self.org_box.setReadOnly(True)
-        self.org_box.setText("Organization")
-
         self.email_box.setReadOnly(True)
-        self.email_box.setText("Email Address")
-
         self.org_site_box.setReadOnly(True)
-        self.org_site_box.setText("Organization Site")
-
         self.phone_num_box.setReadOnly(True)
-        self.phone_num_box.setText("Phone Number")
 
         # Create a container to hold opportunities
         checkbox_box = QGridLayout()
@@ -133,12 +125,18 @@ class Window(QtWidgets.QWidget):
 
         self.yes_button.setDisabled(True)
         self.no_button.setDisabled(True)
+        self.further_discussion_button.setDisabled(True)
 
         # List that will hold the brief entry description
         entry_list = QVBoxLayout()
-        button_list = [None] * 10  # this may work but have to determine number of entries here
+        # Get entries from db
+        self.db_cursor.execute("""SELECT * FROM responses""")
+        db_responses = self.db_cursor.fetchall()
+        # Create an array to hold the entry buttons
+        button_list = [None] * len(db_responses)  # this may work but have to determine number of entries here
         for i in range(10):
-            button_list[i] = QPushButton("Test " + str(i))
+            # Get the entry number and organization name, put them on the button, and assign it the clicked function
+            button_list[i] = QPushButton(db_responses[i][0] + ": " + db_responses[i][5])
             entry_list.addWidget(button_list[i])
             button_list[i].clicked.connect(self.show_full_information)
 
@@ -166,15 +164,16 @@ class Window(QtWidgets.QWidget):
         name_and_title_info.addWidget(self.phone_num_label, 3, 2)
         name_and_title_info.addWidget(self.phone_num_box, 3, 3)
 
-        name_and_title_info.addWidget(self.opportunites_label, 4, 0)
+        name_and_title_info.addWidget(self.opportunities_label, 4, 0)
         name_and_title_info.addLayout(checkbox_box, 5, 1)
 
         name_and_title_info.addWidget(self.collab_time_label, 4, 2)
         name_and_title_info.addLayout(collab_time_box, 5, 3)
 
-        name_and_title_info.addWidget(self.permission_label, 7, 0)
+        name_and_title_info.addWidget(self.permission_label_1, 7, 0)
         name_and_title_info.addWidget(self.yes_button, 8, 1)
         name_and_title_info.addWidget(self.no_button, 8, 2)
+        name_and_title_info.addWidget(self.further_discussion_button, 8, 3)
 
         # Container to hold the two halves of the menu interface
         main_list_container = QHBoxLayout()
@@ -194,19 +193,97 @@ class Window(QtWidgets.QWidget):
         self.setLayout(v_box)
 
     def show_full_information(self):
-        # the plan is to use the information we put into the button label in order to create
-        # an sql query to get the rest of the data
+        # Call reset_checkboxes to clear time, opportunity and permission boxes
+        self.reset_checkboxes()
 
-        # use QCheckBox.setChecked(True) to toggle boxes
-        self.prefix_box.setText("Updated")
-        self.fname_box.setText("Updated")
-        self.lname_box.setText("Updated")
-        self.title_box.setText("Updated")
-        self.org_box.setText("Updated")
-        self.email_box.setText("Updated")
-        self.org_site_box.setText("Updated")
-        self.phone_num_box.setText("Updated")
-        self.course_project_box.setChecked(True)
-        self.sum2022_box.setChecked(True)
-        self.yes_button.setChecked(True)
-        print(self.sender().text())
+        # Get the text on the button that was clicked
+        button_text = self.sender().text()
+
+        # Prepare a query to get the rest of the entry
+        get_query = """SELECT * FROM responses WHERE entryNum = ?"""
+
+        pkey = button_text.split(":")
+
+        # Pass the number on the button to the query, as it is the primary key
+        self.db_cursor.execute(get_query, (pkey[0],))
+
+        # (pkey[0],) in above line was taken from
+        # https://stackoverflow.com/questions/16856647/sqlite3-programmingerror-incorrect-number-of-bindings-supplied-the-current-sta
+        # This allowed two-digit numbers to be passed correctly
+
+        # Get the response from db
+        selected_response = self.db_cursor.fetchall()
+
+        # Set the text boxes
+        self.prefix_box.setText(selected_response[0][1])
+        self.fname_box.setText(selected_response[0][2])
+        self.lname_box.setText(selected_response[0][3])
+        self.title_box.setText(selected_response[0][4])
+        self.org_box.setText(selected_response[0][5])
+        self.email_box.setText(selected_response[0][6])
+        self.org_site_box.setText(selected_response[0][7])
+        self.phone_num_box.setText(selected_response[0][8])
+
+        # Set the checkboxes
+        match selected_response[0][9]:
+            case "Course Project":
+                self.course_project_box.setChecked(True)
+            case "Guest Speaker":
+                self.guest_speaker_box.setChecked(True)
+            case "Site Visit":
+                self.site_visit_box.setChecked(True)
+            case "Job Shadow":
+                self.job_shadow_box.setChecked(True)
+            case "Internships":
+                self.internships_box.setChecked(True)
+            case "Career Panel":
+                self.career_panel_box.setChecked(True)
+            case "Networking Event":
+                self.networking_event_box.setChecked(True)
+            case _:
+                pass
+
+        match selected_response[0][10]:
+            case "Summer 2022":
+                self.sum2022_box.setChecked(True)
+            case "Fall 2022":
+                self.fall2022_box.setChecked(True)
+            case "Spring 2023":
+                self.spr2023_box.setChecked(True)
+            case "Summer 2023":
+                self.sum2023_box.setChecked(True)
+            case "Other":
+                self.other_box.setChecked(True)
+            case _:
+                pass
+
+        match selected_response[0][11]:
+            case "Yes":
+                self.yes_button.setChecked(True)
+            case "No":
+                self.no_button.setChecked(True)
+            case "Further discussion is needed":
+                self.further_discussion_button.setChecked(True)
+            case _:
+                pass
+
+    def reset_checkboxes(self):
+        # Resets all checkboxes when a new entry is selected
+        self.course_project_box.setChecked(False)
+        self.guest_speaker_box.setChecked(False)
+        self.site_visit_box.setChecked(False)
+        self.job_shadow_box.setChecked(False)
+        self.internships_box.setChecked(False)
+        self.career_panel_box.setChecked(False)
+        self.networking_event_box.setChecked(False)
+
+        self.sum2022_box.setChecked(False)
+        self.fall2022_box.setChecked(False)
+        self.spr2023_box.setChecked(False)
+        self.sum2023_box.setChecked(False)
+        self.other_box.setChecked(False)
+
+        self.yes_button.setChecked(False)
+        self.no_button.setChecked(False)
+        self.further_discussion_button.setChecked(False)
+
