@@ -1,5 +1,9 @@
+import sys
+
 from main import get_from_api
 import database_setup
+import UI
+from PySide6 import QtWidgets
 
 
 def test_get_data():
@@ -37,3 +41,26 @@ def test_database():
     # See if the two lists are equal
     assert entry_from_db == entry_values
 
+
+def test_data_in_db():
+    conn, cur = database_setup.open_db("responses.db")
+    cur.execute("""SELECT * FROM responses""")
+    data = cur.fetchall()
+    assert data != None
+
+
+def test_gui_population():
+    conn, cur = database_setup.open_db("testdb.db")
+    test_app = QtWidgets.QApplication
+    test_window = UI.Window(conn, cur)
+    test_window.show()
+
+    cur.execute("""SELECT fname, lname, opportunities, collabTime FROM responses""")
+    test_data = cur.fetchall()
+
+    assert test_data[0] == test_window.fname_box.text()
+    assert test_data[1] == test_window.lname_box.text()
+    assert test_window.guest_speaker_box.isChecked() == True
+    assert test_window.spr2023_box.isChecked() == True
+
+    sys.exit(test_app.exec())

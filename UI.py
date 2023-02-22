@@ -1,10 +1,10 @@
+from PySide6 import QtWidgets
+from PySide6.QtWidgets import QLabel, QLineEdit, QCheckBox, QRadioButton, QPushButton, QVBoxLayout, QHBoxLayout, \
+    QGridLayout, QApplication
+# When finished, change import * to individually import elements
 import sqlite3
 
-from PySide6 import QtCore, QtWidgets, QtGui
-from PySide6.QtWidgets import *
-# When finished, change import * to individually import elements
-import sys
-import sqlite3
+import database_setup
 
 
 class Window(QtWidgets.QWidget):
@@ -69,7 +69,7 @@ class Window(QtWidgets.QWidget):
         self.resize(750, 500)
 
         quit_button = QPushButton("Close", self)
-        quit_button.clicked.connect(QApplication.instance().quit)
+        quit_button.clicked.connect(self.close_program)
         quit_button.pos()
 
         nav_buttons = QHBoxLayout()
@@ -287,3 +287,6 @@ class Window(QtWidgets.QWidget):
         self.no_button.setChecked(False)
         self.further_discussion_button.setChecked(False)
 
+    def close_program(self):
+        database_setup.close_db(self.db_connection)
+        QApplication.instance().quit()
