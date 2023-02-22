@@ -51,7 +51,9 @@ def test_data_in_db():
 
 def test_gui_population():
     conn, cur = database_setup.open_db("testdb.db")
-    test_app = QtWidgets.QApplication()
+    url = 'https://lukasdearruda.wufoo.com/api/v3/forms/cubes-project-proposal-submission/entries.json'
+    responses = get_from_api(url)
+    database_setup.write_response_to_database(responses, cur)
     test_window = UI.Window(conn, cur)
     test_window.show()
 
