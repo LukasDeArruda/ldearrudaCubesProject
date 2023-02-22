@@ -42,7 +42,7 @@ def test_database():
 
 
 def test_data_in_db():
-    conn, cur = database_setup.open_db("responses.db")
+    conn, cur = database_setup.open_db("testdb.db")
     cur.execute("""SELECT * FROM responses""")
     data = cur.fetchall()
     assert data != None
