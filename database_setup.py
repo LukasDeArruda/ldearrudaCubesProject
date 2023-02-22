@@ -13,6 +13,11 @@ def close_db(connection: sqlite3.Connection):
     connection.close()
 
 
+def create_table(cur: sqlite3.Cursor):
+    cur.execute("""CREATE TABLE IF NOT EXISTS responses(entryNum PRIMARY KEY , prefix, fName, lName, title, orgName,
+            email, orgSite, phoneNum, opportunities, collabTime, permission)""")
+
+
 def write_response_to_database(response, cursor):
     values = response.get("Entries")  # get the values of initial json dict
     for i in range(len(values)):

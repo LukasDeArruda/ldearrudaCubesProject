@@ -21,8 +21,7 @@ def test_database():
                      }]}
 
     connection, cursor = database_setup.open_db("testdb.db")
-    cursor.execute("""CREATE TABLE IF NOT EXISTS responses(entryNum PRIMARY KEY , prefix, fName, lName, title, orgName,
-            email, orgSite, phoneNum, opportunities, collabTime, permission)""")
+    database_setup.create_table(cursor)
     database_setup.write_response_to_database(test_response, cursor)
     connection.commit()
 
@@ -51,9 +50,12 @@ def test_data_in_db():
 
 def test_gui_population():
     conn, cur = database_setup.open_db("testdb.db")
+    database_setup.create_table(cur)
+
     url = 'https://lukasdearruda.wufoo.com/api/v3/forms/cubes-project-proposal-submission/entries.json'
     responses = get_from_api(url)
     database_setup.write_response_to_database(responses, cur)
+    app = QtWidgets.QApplication()
     test_window = UI.Window(conn, cur)
     test_window.show()
 
