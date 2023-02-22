@@ -134,7 +134,7 @@ class Window(QtWidgets.QWidget):
         db_responses = self.db_cursor.fetchall()
         # Create an array to hold the entry buttons
         button_list = [None] * len(db_responses)  # this may work but have to determine number of entries here
-        for i in range(10):
+        for i in range(len(db_responses)):
             # Get the entry number and organization name, put them on the button, and assign it the clicked function
             button_list[i] = QPushButton(db_responses[i][0] + ": " + db_responses[i][5])
             entry_list.addWidget(button_list[i])

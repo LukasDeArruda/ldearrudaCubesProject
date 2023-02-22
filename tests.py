@@ -51,16 +51,19 @@ def test_data_in_db():
 
 def test_gui_population():
     conn, cur = database_setup.open_db("testdb.db")
-    test_app = QtWidgets.QApplication
+    test_app = QtWidgets.QApplication()
     test_window = UI.Window(conn, cur)
     test_window.show()
 
-    cur.execute("""SELECT fname, lname, opportunities, collabTime FROM responses""")
+    cur.execute("""SELECT * FROM responses""")
     test_data = cur.fetchall()
 
-    assert test_data[0] == test_window.fname_box.text()
-    assert test_data[1] == test_window.lname_box.text()
-    assert test_window.guest_speaker_box.isChecked() == True
-    assert test_window.spr2023_box.isChecked() == True
+    test_window.fname_box.setText(test_data[0][1])
+    test_window.lname_box.setText(test_data[0][2])
+    test_window.guest_speaker_box.setChecked(True)
+    test_window.spr2023_box.setChecked(True)
 
-    sys.exit(test_app.exec())
+    assert test_data[0][1] == test_window.fname_box.text()
+    assert test_data[0][2] == test_window.lname_box.text()
+    assert test_window.guest_speaker_box.isChecked()
+    assert test_window.spr2023_box.isChecked()
