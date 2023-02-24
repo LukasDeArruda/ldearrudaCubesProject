@@ -57,7 +57,7 @@ class Window(QtWidgets.QWidget):
         self.sum2023_box = QCheckBox("Summer 2023")
         self.other_box = QCheckBox("Other")
 
-        self.permission_label_1 = QLabel("Permission to use organization name?")
+        self.permission_label_1 = QLabel("Permission to use ")
         self.yes_button = QRadioButton("Yes")
         self.no_button = QRadioButton("No")
         self.further_discussion_button = QRadioButton("Further discussion is needed")
@@ -66,7 +66,7 @@ class Window(QtWidgets.QWidget):
 
     def create_ui(self):
         self.setWindowTitle("Form Submissions")
-        self.resize(750, 500)
+        self.resize(1000, 500)
 
         quit_button = QPushButton("Close", self)
         quit_button.clicked.connect(self.close_program)
