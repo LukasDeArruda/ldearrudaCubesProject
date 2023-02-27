@@ -1,7 +1,6 @@
 from PySide6 import QtWidgets
 from PySide6.QtWidgets import QLabel, QLineEdit, QCheckBox, QRadioButton, QPushButton, QVBoxLayout, QHBoxLayout, \
     QGridLayout, QApplication
-# When finished, change import * to individually import elements
 import sqlite3
 
 import database_setup
