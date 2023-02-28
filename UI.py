@@ -56,10 +56,16 @@ class Window(QtWidgets.QWidget):
         self.sum2023_box = QCheckBox("Summer 2023")
         self.other_box = QCheckBox("Other")
 
-        self.permission_label_1 = QLabel("Permission to use ")
+        self.permission_label_1 = QLabel("Use organization name?")
         self.yes_button = QRadioButton("Yes")
         self.no_button = QRadioButton("No")
         self.further_discussion_button = QRadioButton("Further discussion is needed")
+
+        self.claim_project_button = QPushButton("Claim...")
+        self.claim_project_button.clicked.connect(self.claim_project)
+
+        self.project_claimed_box = QCheckBox()
+        self.claim_box_label = QLabel("Claimed?")
 
         self.create_ui()
 
@@ -69,10 +75,11 @@ class Window(QtWidgets.QWidget):
 
         quit_button = QPushButton("Close", self)
         quit_button.clicked.connect(self.close_program)
-        quit_button.pos()
+        # quit_button.pos()
 
         nav_buttons = QHBoxLayout()
         nav_buttons.addStretch(1)  # This sets the size of the button within the box
+        nav_buttons.addWidget(self.claim_project_button)
         nav_buttons.addWidget(quit_button)
 
         # Set all boxes to read only, and fill with placeholder text
@@ -115,7 +122,7 @@ class Window(QtWidgets.QWidget):
         collab_time_box.addWidget(self.sum2023_box, 3, 0)
         collab_time_box.addWidget(self.other_box, 4, 0)
 
-        # Setting checkboxes to be disabled so they can't be modified
+        # Setting checkboxes to be disabled, so they can't be modified
         self.sum2022_box.setDisabled(True)
         self.fall2022_box.setDisabled(True)
         self.spr2023_box.setDisabled(True)
@@ -173,6 +180,9 @@ class Window(QtWidgets.QWidget):
         name_and_title_info.addWidget(self.yes_button, 8, 1)
         name_and_title_info.addWidget(self.no_button, 8, 2)
         name_and_title_info.addWidget(self.further_discussion_button, 8, 3)
+
+        name_and_title_info.addWidget(self.claim_box_label, 9, 0)
+        name_and_title_info.addWidget(self.project_claimed_box, 9, 1)
 
         # Container to hold the two halves of the menu interface
         main_list_container = QHBoxLayout()
@@ -285,6 +295,9 @@ class Window(QtWidgets.QWidget):
         self.yes_button.setChecked(False)
         self.no_button.setChecked(False)
         self.further_discussion_button.setChecked(False)
+
+    def claim_project(self):
+        print("This project will be claimed")
 
     def close_program(self):
         database_setup.close_db(self.db_connection)

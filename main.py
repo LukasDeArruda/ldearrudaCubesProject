@@ -6,8 +6,8 @@ import json
 from secrets import api_key
 import database_setup
 from PySide6 import QtWidgets
-from PySide6.QtWidgets import QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QDialog, QDialogButtonBox
-from PySide6.QtCore import QPoint, QCoreApplication
+from PySide6.QtWidgets import QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QDialog
+from PySide6.QtCore import QPoint
 import UI
 
 

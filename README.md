@@ -1,5 +1,5 @@
 Lukas DeArruda 
-COMP 490 Project 1 Sprint 2
+COMP 490 Project 1
 
 Need to install requests, pyside6, and create a file called secrets.py that 
 contains api_key

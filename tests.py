@@ -7,8 +7,7 @@ from PySide6 import QtWidgets
 
 
 def test_get_data():
-    url = 'https://lukasdearruda.wufoo.com/api/v3/forms/cubes-project-proposal-submission/entries.json'
-    responses = get_from_api(url)
+    responses = get_from_api()
     values = responses.get("Entries")
     assert len(values) == 10
 
@@ -52,8 +51,7 @@ def test_gui_population():
     conn, cur = database_setup.open_db("testdb.db")
     database_setup.create_table(cur)
 
-    url = 'https://lukasdearruda.wufoo.com/api/v3/forms/cubes-project-proposal-submission/entries.json'
-    responses = get_from_api(url)
+    responses = get_from_api()
     database_setup.write_response_to_database(responses, cur)
     app = QtWidgets.QApplication()
     test_window = UI.Window(conn, cur)

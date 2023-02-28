@@ -25,9 +25,9 @@ def write_response_to_database(response, cursor):
         try:
             cursor.execute("""INSERT INTO responses(entryNum, prefix, fName, lName, title, orgName, email,
             orgSite, phoneNum, opportunities, collabTime, permission) VALUES (?,?,?,?,?,?,?,?,?,?,?,?) """,
-                       (entry_responses[0], entry_responses[1], entry_responses[2], entry_responses[3],
-                        entry_responses[4], entry_responses[5], entry_responses[6], entry_responses[7],
-                        entry_responses[8], entry_responses[9], entry_responses[10], entry_responses[11]))
+                           (entry_responses[0], entry_responses[1], entry_responses[2], entry_responses[3],
+                            entry_responses[4], entry_responses[5], entry_responses[6], entry_responses[7],
+                            entry_responses[8], entry_responses[9], entry_responses[10], entry_responses[11]))
         # Insert the values into the database
         except sqlite3.IntegrityError:  # pass if primary key is already used
             pass
