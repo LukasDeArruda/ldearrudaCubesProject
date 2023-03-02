@@ -1,15 +1,13 @@
 import sys
-
-from main import get_from_api
 import database_setup
 import UI
 from PySide6 import QtWidgets
 
 
 def test_get_data():
-    responses = get_from_api()
+    responses = database_setup.get_from_api()
     values = responses.get("Entries")
-    assert len(values) == 10
+    assert len(values) == 11
 
 
 def test_database():
@@ -51,7 +49,7 @@ def test_gui_population():
     conn, cur = database_setup.open_db("testdb.db")
     database_setup.create_table(cur)
 
-    responses = get_from_api()
+    responses = database_setup.get_from_api()
     database_setup.write_response_to_database(responses, cur)
     app = QtWidgets.QApplication()
     test_window = UI.Window(conn, cur)
