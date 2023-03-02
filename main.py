@@ -1,9 +1,5 @@
-import sqlite3
 import sys
-from requests.auth import HTTPBasicAuth
-import requests
 import json
-from secrets import api_key
 import database_setup
 from PySide6 import QtWidgets
 import updateEntriesWindow

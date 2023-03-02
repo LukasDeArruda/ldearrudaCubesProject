@@ -1,7 +1,7 @@
 from PySide6 import QtWidgets
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QLabel, QLineEdit, QCheckBox, QRadioButton, QPushButton, QVBoxLayout, QHBoxLayout, \
-    QGridLayout, QApplication, QScrollArea
+    QGridLayout, QApplication, QScrollArea, QSpacerItem
 import sqlite3
 
 import database_setup
@@ -85,11 +85,13 @@ class Window(QtWidgets.QWidget):
         self.claimed_dept = QLineEdit()
         self.claimed_dept_label = QLabel("Department")
 
+        self.dummy_element = QSpacerItem(250, 5)
+
         self.create_ui()
 
     def create_ui(self):
         self.setWindowTitle("Form Submissions")
-        self.resize(1000, 500)
+        self.resize(1250, 500)
 
         quit_button = QPushButton("Close", self)
         quit_button.clicked.connect(self.close_program)
@@ -187,24 +189,26 @@ class Window(QtWidgets.QWidget):
         name_and_title_info = QGridLayout()
 
         name_and_title_info.addWidget(self.prefix_label, 0, 0)
-        name_and_title_info.addWidget(self.prefix_box, 0, 1)
-        name_and_title_info.addWidget(self.title_label, 0, 2)
-        name_and_title_info.addWidget(self.title_box, 0, 3)
+        name_and_title_info.addWidget(self.prefix_box, 0, 1, 1, 2)
+        name_and_title_info.addWidget(self.title_label, 0, 3)
+        name_and_title_info.addWidget(self.title_box, 0, 4, 1, 2)
+
+        name_and_title_info.addItem(self.dummy_element, 0, 4)
 
         name_and_title_info.addWidget(self.fname_label, 1, 0)
-        name_and_title_info.addWidget(self.fname_box, 1, 1)
-        name_and_title_info.addWidget(self.lname_label, 1, 2)
-        name_and_title_info.addWidget(self.lname_box, 1, 3)
+        name_and_title_info.addWidget(self.fname_box, 1, 1, 1, 2)
+        name_and_title_info.addWidget(self.lname_label, 1, 3)
+        name_and_title_info.addWidget(self.lname_box, 1, 4, 1, 2)
 
         name_and_title_info.addWidget(self.org_label, 2, 0)
-        name_and_title_info.addWidget(self.org_box, 2, 1)
-        name_and_title_info.addWidget(self.org_site_label, 2, 2)
-        name_and_title_info.addWidget(self.org_site_box, 2, 3)
+        name_and_title_info.addWidget(self.org_box, 2, 1, 1, 2)
+        name_and_title_info.addWidget(self.org_site_label, 2, 3)
+        name_and_title_info.addWidget(self.org_site_box, 2, 4, 1, 2)
 
         name_and_title_info.addWidget(self.email_label, 3, 0)
-        name_and_title_info.addWidget(self.email_box, 3, 1)
-        name_and_title_info.addWidget(self.phone_num_label, 3, 2)
-        name_and_title_info.addWidget(self.phone_num_box, 3, 3)
+        name_and_title_info.addWidget(self.email_box, 3, 1, 1, 2)
+        name_and_title_info.addWidget(self.phone_num_label, 3, 3)
+        name_and_title_info.addWidget(self.phone_num_box, 3, 4, 1, 2)
 
         name_and_title_info.addWidget(self.opportunities_label, 4, 0)
         name_and_title_info.addLayout(checkbox_box, 5, 1)
