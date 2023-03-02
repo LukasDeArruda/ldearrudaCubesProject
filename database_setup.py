@@ -3,6 +3,7 @@ from typing import Tuple
 import requests
 from requests.auth import HTTPBasicAuth
 from secrets import api_key
+import sys
 
 
 def open_db(filename: str) -> Tuple[sqlite3.Connection, sqlite3.Cursor]:
