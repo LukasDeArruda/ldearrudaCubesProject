@@ -1,5 +1,8 @@
 import sqlite3
 from typing import Tuple
+import requests
+from requests.auth import HTTPBasicAuth
+from secrets import api_key
 
 
 def open_db(filename: str) -> Tuple[sqlite3.Connection, sqlite3.Cursor]:
@@ -12,10 +15,20 @@ def close_db(connection: sqlite3.Connection):
     connection.commit()
     connection.close()
 
+def get_from_api():
+    url = 'https://lukasdearruda.wufoo.com/api/v3/forms/cubes-project-proposal-submission/entries.json'
+    entry = requests.get(url, auth=HTTPBasicAuth(api_key, 'pass'))
+    if entry.status_code != 200:
+        print(f"Failed to get data, response code: {entry.status_code} and error message: {entry.reason}")
+        sys.exit(-1)
+    json_response = entry.json()
+    return json_response
 
 def create_table(cur: sqlite3.Cursor):
     cur.execute("""CREATE TABLE IF NOT EXISTS responses(entryNum PRIMARY KEY , prefix, fName, lName, title, orgName,
-            email, orgSite, phoneNum, opportunities, collabTime, permission)""")
+            email, orgSite, phoneNum, opportunities, collabTime, permission, claimed DEFAULT 0, claimed_email)""")
+
+    cur.execute(("""CREATE TABLE IF NOT EXISTS user_records(email PRIMARY KEY, fname, lname, title, dept)"""))
 
 
 def write_response_to_database(response, cursor):

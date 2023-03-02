@@ -1,6 +1,7 @@
 from PySide6 import QtWidgets
+from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QLabel, QLineEdit, QCheckBox, QRadioButton, QPushButton, QVBoxLayout, QHBoxLayout, \
-    QGridLayout, QApplication
+    QGridLayout, QApplication, QScrollArea
 import sqlite3
 
 import database_setup
@@ -12,6 +13,8 @@ class Window(QtWidgets.QWidget):
 
         self.db_connection = connection
         self.db_cursor = cursor
+
+        self.last_primary_key = 0
 
         self.prefix_label = QLabel("Prefix: ")
         self.prefix_box = QLineEdit()
@@ -67,6 +70,21 @@ class Window(QtWidgets.QWidget):
         self.project_claimed_box = QCheckBox()
         self.claim_box_label = QLabel("Claimed?")
 
+        self.claimed_fname = QLineEdit()
+        self.claimed_fname_label = QLabel("First Name")
+
+        self.claimed_lname = QLineEdit()
+        self.claimed_lname_label = QLabel("Last Name")
+
+        self.claimed_title = QLineEdit()
+        self.claimed_title_label = QLabel("Title")
+
+        self.claimed_email = QLineEdit()
+        self.claimed_email_label = QLabel("Email")
+
+        self.claimed_dept = QLineEdit()
+        self.claimed_dept_label = QLabel("Department")
+
         self.create_ui()
 
     def create_ui(self):
@@ -91,6 +109,12 @@ class Window(QtWidgets.QWidget):
         self.email_box.setReadOnly(True)
         self.org_site_box.setReadOnly(True)
         self.phone_num_box.setReadOnly(True)
+
+        self.claimed_fname.setReadOnly(True)
+        self.claimed_lname.setReadOnly(True)
+        self.claimed_title.setReadOnly(True)
+        self.claimed_email.setReadOnly(True)
+        self.claimed_dept.setReadOnly(True)
 
         # Create a container to hold opportunities
         checkbox_box = QGridLayout()
@@ -133,8 +157,20 @@ class Window(QtWidgets.QWidget):
         self.no_button.setDisabled(True)
         self.further_discussion_button.setDisabled(True)
 
+        self.project_claimed_box.setDisabled(True)
+        self.claimed_fname.setDisabled(True)
+        self.claimed_lname.setDisabled(True)
+        self.claimed_title.setDisabled(True)
+        self.claimed_email.setDisabled(True)
+        self.claimed_dept.setDisabled(True)
+
         # List that will hold the brief entry description
         entry_list = QVBoxLayout()
+        button_scroll_menu = QScrollArea()
+        button_scroll_menu.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        button_scroll_menu.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        button_scroll_menu.setWidgetResizable(True)
+        button_scroll_menu.setLayout(entry_list)
         # Get entries from db
         self.db_cursor.execute("""SELECT * FROM responses""")
         db_responses = self.db_cursor.fetchall()
@@ -184,9 +220,19 @@ class Window(QtWidgets.QWidget):
         name_and_title_info.addWidget(self.claim_box_label, 9, 0)
         name_and_title_info.addWidget(self.project_claimed_box, 9, 1)
 
+        name_and_title_info.addWidget(self.claimed_fname_label, 10, 0)
+        name_and_title_info.addWidget(self.claimed_fname, 10, 1)
+        name_and_title_info.addWidget(self.claimed_lname_label, 10, 2)
+        name_and_title_info.addWidget(self.claimed_lname, 10, 3)
+
+        name_and_title_info.addWidget(self.claimed_dept_label, 11, 0)
+        name_and_title_info.addWidget(self.claimed_dept, 11, 1)
+        name_and_title_info.addWidget(self.claimed_email_label, 11, 2)
+        name_and_title_info.addWidget(self.claimed_email, 11, 3)
+
         # Container to hold the two halves of the menu interface
         main_list_container = QHBoxLayout()
-        main_list_container.addLayout(entry_list)
+        main_list_container.addWidget(button_scroll_menu)
         # adjust spacing once left side is finished to make it look good
         main_list_container.addSpacing(100)
         main_list_container.addLayout(detailed_entry)
@@ -212,6 +258,7 @@ class Window(QtWidgets.QWidget):
         get_query = """SELECT * FROM responses WHERE entryNum = ?"""
 
         pkey = button_text.split(":")
+        self.last_primary_key = pkey
 
         # Pass the number on the button to the query, as it is the primary key
         self.db_cursor.execute(get_query, (pkey[0],))
@@ -295,9 +342,11 @@ class Window(QtWidgets.QWidget):
         self.yes_button.setChecked(False)
         self.no_button.setChecked(False)
         self.further_discussion_button.setChecked(False)
+        self.project_claimed_box.setChecked(False)
 
     def claim_project(self):
-        print("This project will be claimed")
+        self.project_claimed_box.setChecked(True)
+        self.db_cursor.execute("""UPDATE responses SET claimed = 1 WHERE entryNum = ?""", self.last_primary_key)
 
     def close_program(self):
         database_setup.close_db(self.db_connection)
