@@ -1,7 +1,7 @@
 from PySide6 import QtWidgets
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QLabel, QLineEdit, QCheckBox, QRadioButton, QPushButton, QVBoxLayout, QHBoxLayout, \
-    QGridLayout, QApplication, QScrollArea, QSpacerItem
+    QGridLayout, QApplication, QScrollArea, QSpacerItem, QDialog
 import sqlite3
 import database_setup
 import user_info_window
@@ -354,11 +354,24 @@ class Window(QtWidgets.QWidget):
         self.project_claimed_box.setChecked(False)
 
     def claim_project(self):
-        self.project_claimed_box.setChecked(True)
-        claim_query = """UPDATE responses SET claimed = 1 WHERE entryNum = (?)"""
-        self.db_cursor.execute(claim_query, (str(self.last_primary_key),))
-        self.user_info_window.show()
-        self.db_connection.commit()
+        if self.project_claimed_box.isChecked():
+            already_claimed_window = QDialog()
+            already_claimed_window.setWindowTitle("Already Claimed")
+            claimed_layout = QVBoxLayout()
+            ok_button = QPushButton("Ok")
+            ok_button.clicked.connect(already_claimed_window.close)
+            claimed_message = QLabel("This project has already been claimed")
+            claimed_layout.addWidget(claimed_message)
+            claimed_layout.addWidget(ok_button)
+            already_claimed_window.setLayout(claimed_layout)
+            already_claimed_window.show()
+            already_claimed_window.exec()
+        else:
+            self.project_claimed_box.setChecked(True)
+            claim_query = """UPDATE responses SET claimed = 1 WHERE entryNum = (?)"""
+            self.db_cursor.execute(claim_query, (str(self.last_primary_key),))
+            self.user_info_window.show()
+            self.db_connection.commit()
 
     def close_program(self):
         database_setup.close_db(self.db_connection)

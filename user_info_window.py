@@ -1,5 +1,5 @@
 from PySide6 import QtWidgets
-from PySide6.QtWidgets import QLabel, QLineEdit, QPushButton, QHBoxLayout, QVBoxLayout, QGridLayout
+from PySide6.QtWidgets import QLabel, QLineEdit, QPushButton, QHBoxLayout, QVBoxLayout, QGridLayout, QDialog
 import sqlite3
 
 
@@ -12,6 +12,7 @@ class UserInfoWindow(QtWidgets.QWidget):
 
         self.claim_button = QPushButton("Claim")
         self.cancel_button = QPushButton("Cancel")
+        self.add_new_record_button = QPushButton("Add Record")
 
         self.email_label = QLabel("Email")
         self.email_box = QLineEdit()
@@ -63,8 +64,10 @@ class UserInfoWindow(QtWidgets.QWidget):
 
         button_layout = QHBoxLayout()
         self.cancel_button.clicked.connect(self.close_window)
-        self.claim_button.clicked.connect(self.submit_user_records)
+        self.claim_button.clicked.connect(self.claim_project)
+        self.add_new_record_button.clicked.connect(self.add_new_user)
         button_layout.addWidget(self.claim_button)
+        button_layout.addWidget(self.add_new_record_button)
         button_layout.addWidget(self.cancel_button)
         button_layout.addStretch(1)
 
@@ -74,37 +77,62 @@ class UserInfoWindow(QtWidgets.QWidget):
         self.setLayout(main_layout)
 
     def add_email_to_db(self):
+        # Check if email is in db, returns 1 if yes, 0 if no
         self.cursor.execute("""SELECT EXISTS(SELECT * FROM user_records 
                             WHERE email = ?)""", (self.email_box.text(),))
-
         is_in_db = self.cursor.fetchall()
+
         if is_in_db[0][0] == 1:
-            print("Email Exists")
             self.cursor.execute("""SELECT * FROM user_records WHERE email = ?""", (self.email_box.text(),))
             selected_entry = self.cursor.fetchall()
 
-            self.fname_box.setReadOnly(True)
             self.fname_box.setText(selected_entry[0][1])
-
-            self.lname_box.setReadOnly(True)
             self.lname_box.setText(selected_entry[0][2])
-
-            self.title_box.setReadOnly(True)
             self.title_box.setText(selected_entry[0][3])
-
-            self.dept_box.setReadOnly(True)
             self.dept_box.setText(selected_entry[0][4])
         else:
-            print("Email not in db")
+            prompt_window = QDialog(self)
+            prompt_window.setWindowTitle("User Not Found")
+            prompt_layout = QVBoxLayout()
+            prompt_label = QLabel("Email not found. Please enter user information")
+            ok_button = QPushButton("Ok")
+            prompt_layout.addWidget(prompt_label)
+            prompt_layout.addWidget(ok_button)
+            ok_button.clicked.connect(prompt_window.close)
+            prompt_window.setLayout(prompt_layout)
+
+            self.fname_box.setReadOnly(False)
+            self.lname_box.setReadOnly(False)
+            self.title_box.setReadOnly(False)
+            self.dept_box.setReadOnly(False)
+
+            prompt_window.exec()
         # If email is in the database, autofill the rest of the info
         # if not, prompt user to fill in the rest of their info
 
     def close_window(self):
         self.hide()
 
-    def submit_user_records(self):
+    def claim_project(self):
         print(self.fname_box.text())
         print(self.lname_box.text())
         print(self.title_box.text())
         print(self.dept_box.text())
         print(self.title_box.text())
+
+    def add_new_user(self):
+        self.cursor.execute("""INSERT INTO user_records(email, fname, lname, title, dept)
+                            VALUES (?,?,?,?,?)""", (self.email_box.text(), self.fname_box.text(), self.lname_box.text(),
+                                                    self.title_box.text(), self.dept_box.text()))
+        self.connection.commit()
+
+        confirmation_window = QDialog(self)
+        confirmation_window.setWindowTitle("User Added")
+        confirm_layout = QVBoxLayout()
+        confirm_label = QLabel("Entry created. You may now claim a project")
+        ok_button = QPushButton("Ok")
+        confirm_layout.addWidget(confirm_label)
+        confirm_layout.addWidget(ok_button)
+        ok_button.clicked.connect(confirmation_window.close)
+        confirmation_window.setLayout(confirm_layout)
+        confirmation_window.exec()
