@@ -29,9 +29,8 @@ def get_from_api():
 
 def create_table(cur: sqlite3.Cursor):
     cur.execute("""CREATE TABLE IF NOT EXISTS responses(entryNum PRIMARY KEY , prefix, fName, lName, title, orgName,
-            email, orgSite, phoneNum, opportunities, collabTime, permission, claimed DEFAULT 0, claimed_email DEFAULT '')
-                """)
-
+            email, orgSite, phoneNum, opportunities, collabTime, permission, claimed DEFAULT 0, 
+            claimed_email DEFAULT '')""")
     cur.execute(("""CREATE TABLE IF NOT EXISTS user_records(email PRIMARY KEY, fname, lname, title, dept)"""))
 
 

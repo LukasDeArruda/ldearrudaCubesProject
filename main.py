@@ -2,7 +2,7 @@ import sys
 import json
 import database_setup
 from PySide6 import QtWidgets
-import updateEntriesWindow
+import update_entries_window
 
 
 def write_response_to_file(response):
@@ -17,7 +17,7 @@ def main():
     connection.commit()
 
     app = QtWidgets.QApplication()
-    update_window = updateEntriesWindow.UpdateEntriesWindow(connection, cursor)
+    update_window = update_entries_window.UpdateEntriesWindow(connection, cursor)
     update_window.show()
     sys.exit(app.exec())
 

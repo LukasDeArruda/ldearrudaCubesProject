@@ -3,8 +3,8 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QLabel, QLineEdit, QCheckBox, QRadioButton, QPushButton, QVBoxLayout, QHBoxLayout, \
     QGridLayout, QApplication, QScrollArea, QSpacerItem
 import sqlite3
-
 import database_setup
+import user_info_window
 
 
 class Window(QtWidgets.QWidget):
@@ -86,6 +86,8 @@ class Window(QtWidgets.QWidget):
         self.claimed_dept_label = QLabel("Department")
 
         self.dummy_element = QSpacerItem(250, 5)
+
+        self.user_info_window = user_info_window.UserInfoWindow(self.db_connection, self.db_cursor)
 
         self.create_ui()
 
@@ -262,7 +264,7 @@ class Window(QtWidgets.QWidget):
         get_query = """SELECT * FROM responses WHERE entryNum = ?"""
 
         pkey = button_text.split(":")
-        self.last_primary_key = pkey
+        self.last_primary_key = pkey[0]
 
         # Pass the number on the button to the query, as it is the primary key
         self.db_cursor.execute(get_query, (pkey[0],))
@@ -327,6 +329,9 @@ class Window(QtWidgets.QWidget):
             case _:
                 pass
 
+        if selected_response[0][12] == 1:
+            self.project_claimed_box.setChecked(True)
+
     def reset_checkboxes(self):
         # Resets all checkboxes when a new entry is selected
         self.course_project_box.setChecked(False)
@@ -350,7 +355,10 @@ class Window(QtWidgets.QWidget):
 
     def claim_project(self):
         self.project_claimed_box.setChecked(True)
-        self.db_cursor.execute("""UPDATE responses SET claimed = 1 WHERE entryNum = ?""", self.last_primary_key)
+        claim_query = """UPDATE responses SET claimed = 1 WHERE entryNum = (?)"""
+        self.db_cursor.execute(claim_query, (str(self.last_primary_key),))
+        self.user_info_window.show()
+        self.db_connection.commit()
 
     def close_program(self):
         database_setup.close_db(self.db_connection)
