@@ -1,7 +1,7 @@
 from PySide6 import QtWidgets
 from PySide6.QtWidgets import QLabel, QLineEdit, QPushButton, QHBoxLayout, QVBoxLayout, QGridLayout, QDialog
 import sqlite3
-
+import popup_window
 
 class UserInfoWindow(QtWidgets.QWidget):
     def __init__(self, conn: sqlite3.Connection, cur: sqlite3.Cursor, pkey):
@@ -93,22 +93,14 @@ class UserInfoWindow(QtWidgets.QWidget):
             self.title_box.setText(selected_entry[0][3])
             self.dept_box.setText(selected_entry[0][4])
         else:
-            prompt_window = QDialog(self)
-            prompt_window.setWindowTitle("User Not Found")
-            prompt_layout = QVBoxLayout()
             prompt_label = QLabel("Email not found. Please enter user information")
-            ok_button = QPushButton("Ok")
-            prompt_layout.addWidget(prompt_label)
-            prompt_layout.addWidget(ok_button)
-            ok_button.clicked.connect(prompt_window.close)
-            prompt_window.setLayout(prompt_layout)
-
+            popup = popup_window.PopupWindow(prompt_label)
+            popup.exec()
             self.fname_box.setReadOnly(False)
             self.lname_box.setReadOnly(False)
             self.title_box.setReadOnly(False)
             self.dept_box.setReadOnly(False)
 
-            prompt_window.exec()
         # If email is in the database, autofill the rest of the info
         # if not, prompt user to fill in the rest of their info
 
@@ -125,15 +117,8 @@ class UserInfoWindow(QtWidgets.QWidget):
                                                     self.title_box.text(), self.dept_box.text()))
         self.connection.commit()
 
-        confirmation_window = QDialog(self)
-        confirmation_window.setWindowTitle("User Added")
-        confirm_layout = QVBoxLayout()
         confirm_label = QLabel("Entry created. You may now claim a project")
-        ok_button = QPushButton("Ok")
-        confirm_layout.addWidget(confirm_label)
-        confirm_layout.addWidget(ok_button)
-        ok_button.clicked.connect(confirmation_window.close)
-        confirmation_window.setLayout(confirm_layout)
-        confirmation_window.exec()
+        popup = popup_window.PopupWindow(confirm_label)
+        popup.exec()
 
         # Need to put email into db before updating claimed email
