@@ -6,10 +6,16 @@ contains api_key
 
 This project grabs data from a specified API in json format and saves it to database. 
 
-The database has one table with 12 columns: 
-entryNum, prefix, fName, lName, title, orgName, email, ,orgSite, phoneNum, opportunities, collabTime, permission
+The database has two tables:
+responses, which has columns entryNum, fname, lname, title, orgName, email, orgsite, phoneNum, opportunities, collabTime, permission, claimed, and claimed_email
 
-Entries are displayed in buttons on the side. Clicking one will show the full information of the entry.
+and
+
+user_records, which has columns claimed_email, fname, lname, title, and dept
+
+
+
+Entries are displayed in buttons on the side. Clicking one will show the full information of the entry. After an entry is displayed, a user can click the claim button to begin the claim process. Upon doing so, the user will be propmpted to enter an email. If that email is in the user_records table, the rest of the info auto populates. If not, the user will be prompted to fill in the rest of their info. Once user info is in the database table, the porject can be claimed.
 
 Nothing is missing from this project
 

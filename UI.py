@@ -227,15 +227,20 @@ class Window(QtWidgets.QWidget):
         name_and_title_info.addWidget(self.claim_box_label, 9, 0)
         name_and_title_info.addWidget(self.project_claimed_box, 9, 1)
 
+
         name_and_title_info.addWidget(self.claimed_fname_label, 10, 0)
-        name_and_title_info.addWidget(self.claimed_fname, 10, 1)
-        name_and_title_info.addWidget(self.claimed_lname_label, 10, 2)
-        name_and_title_info.addWidget(self.claimed_lname, 10, 3)
+        name_and_title_info.addWidget(self.claimed_fname, 10, 1, 1, 2)
+        name_and_title_info.addWidget(self.claimed_lname_label, 10, 3)
+        name_and_title_info.addWidget(self.claimed_lname, 10, 4, 1, 2)
 
         name_and_title_info.addWidget(self.claimed_dept_label, 11, 0)
-        name_and_title_info.addWidget(self.claimed_dept, 11, 1)
-        name_and_title_info.addWidget(self.claimed_email_label, 11, 2)
-        name_and_title_info.addWidget(self.claimed_email, 11, 3)
+        name_and_title_info.addWidget(self.claimed_dept, 11, 1, 1, 2)
+        name_and_title_info.addWidget(self.claimed_email_label, 11, 3)
+        name_and_title_info.addWidget(self.claimed_email, 11, 4, 1, 2)
+
+        name_and_title_info.addWidget(self.claimed_title_label, 12, 0)
+        name_and_title_info.addWidget(self.claimed_title, 12, 1, 1, 2)
+
 
         # Container to hold the two halves of the menu interface
         main_list_container = QHBoxLayout()
@@ -337,10 +342,10 @@ class Window(QtWidgets.QWidget):
                                     WHERE entryNum = ?""", (self.last_primary_key,))
             claimed_entry = self.db_cursor.fetchall()
             self.claimed_email.setText(claimed_entry[0][13])
-            self.claimed_title.setText(claimed_entry[0][14])
             self.claimed_fname.setText(claimed_entry[0][15])
             self.claimed_lname.setText(claimed_entry[0][16])
-            self.claimed_dept.setText(claimed_entry[0][17])
+            self.claimed_title.setText(claimed_entry[0][17])
+            self.claimed_dept.setText(claimed_entry[0][18])
         else:
             self.claimed_email.setText("")
             self.claimed_title.setText("")
@@ -386,3 +391,4 @@ class Window(QtWidgets.QWidget):
     def close_program(self):
         database_setup.close_db(self.db_connection)
         QApplication.instance().quit()
+
