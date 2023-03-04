@@ -4,8 +4,10 @@ import sqlite3
 
 
 class UserInfoWindow(QtWidgets.QWidget):
-    def __init__(self, conn: sqlite3.Connection, cur: sqlite3.Cursor):
+    def __init__(self, conn: sqlite3.Connection, cur: sqlite3.Cursor, pkey):
         super().__init__()
+
+        self.primary_key = pkey
 
         self.connection = conn
         self.cursor = cur
@@ -79,11 +81,11 @@ class UserInfoWindow(QtWidgets.QWidget):
     def add_email_to_db(self):
         # Check if email is in db, returns 1 if yes, 0 if no
         self.cursor.execute("""SELECT EXISTS(SELECT * FROM user_records 
-                            WHERE email = ?)""", (self.email_box.text(),))
+                            WHERE claimed_email = ?)""", (self.email_box.text(),))
         is_in_db = self.cursor.fetchall()
 
         if is_in_db[0][0] == 1:
-            self.cursor.execute("""SELECT * FROM user_records WHERE email = ?""", (self.email_box.text(),))
+            self.cursor.execute("""SELECT * FROM user_records WHERE claimed_email = ?""", (self.email_box.text(),))
             selected_entry = self.cursor.fetchall()
 
             self.fname_box.setText(selected_entry[0][1])
@@ -111,17 +113,14 @@ class UserInfoWindow(QtWidgets.QWidget):
         # if not, prompt user to fill in the rest of their info
 
     def close_window(self):
-        self.hide()
+        self.close()
 
     def claim_project(self):
-        print(self.fname_box.text())
-        print(self.lname_box.text())
-        print(self.title_box.text())
-        print(self.dept_box.text())
-        print(self.title_box.text())
+        self.cursor.execute("""UPDATE responses SET claimed_email = ? WHERE entryNum = ?""",
+                            (self.email_box.text(), self.primary_key,))
 
     def add_new_user(self):
-        self.cursor.execute("""INSERT INTO user_records(email, fname, lname, title, dept)
+        self.cursor.execute("""INSERT INTO user_records(claimed_email, fname, lname, title, dept)
                             VALUES (?,?,?,?,?)""", (self.email_box.text(), self.fname_box.text(), self.lname_box.text(),
                                                     self.title_box.text(), self.dept_box.text()))
         self.connection.commit()
@@ -136,3 +135,5 @@ class UserInfoWindow(QtWidgets.QWidget):
         ok_button.clicked.connect(confirmation_window.close)
         confirmation_window.setLayout(confirm_layout)
         confirmation_window.exec()
+
+        # Need to put email into db before updating claimed email

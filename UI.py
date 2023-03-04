@@ -87,7 +87,7 @@ class Window(QtWidgets.QWidget):
 
         self.dummy_element = QSpacerItem(250, 5)
 
-        self.user_info_window = user_info_window.UserInfoWindow(self.db_connection, self.db_cursor)
+        self.user_info_window = None
 
         self.create_ui()
 
@@ -354,6 +354,8 @@ class Window(QtWidgets.QWidget):
         self.project_claimed_box.setChecked(False)
 
     def claim_project(self):
+        self.user_info_window = user_info_window.UserInfoWindow(self.db_connection, self.db_cursor,
+                                                                self.last_primary_key)
         if self.project_claimed_box.isChecked():
             already_claimed_window = QDialog()
             already_claimed_window.setWindowTitle("Already Claimed")
@@ -367,7 +369,6 @@ class Window(QtWidgets.QWidget):
             already_claimed_window.show()
             already_claimed_window.exec()
         else:
-            self.project_claimed_box.setChecked(True)
             claim_query = """UPDATE responses SET claimed = 1 WHERE entryNum = (?)"""
             self.db_cursor.execute(claim_query, (str(self.last_primary_key),))
             self.user_info_window.show()
