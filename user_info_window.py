@@ -3,6 +3,7 @@ from PySide6.QtWidgets import QLabel, QLineEdit, QPushButton, QHBoxLayout, QVBox
 import sqlite3
 import popup_window
 
+
 class UserInfoWindow(QtWidgets.QWidget):
     def __init__(self, conn: sqlite3.Connection, cur: sqlite3.Cursor, pkey):
         super().__init__()
@@ -93,8 +94,9 @@ class UserInfoWindow(QtWidgets.QWidget):
             self.title_box.setText(selected_entry[0][3])
             self.dept_box.setText(selected_entry[0][4])
         else:
+            popup_window_title = "Email Not Found"
             prompt_label = QLabel("Email not found. Please enter user information")
-            popup = popup_window.PopupWindow(prompt_label)
+            popup = popup_window.PopupWindow(prompt_label, popup_window_title)
             popup.exec()
             self.fname_box.setReadOnly(False)
             self.lname_box.setReadOnly(False)
@@ -108,8 +110,15 @@ class UserInfoWindow(QtWidgets.QWidget):
         self.close()
 
     def claim_project(self):
+        self.cursor.execute("""UPDATE responses SET claimed = 1 WHERE entryNum = ?""", (self.primary_key,))
         self.cursor.execute("""UPDATE responses SET claimed_email = ? WHERE entryNum = ?""",
                             (self.email_box.text(), self.primary_key,))
+        self.connection.commit()
+
+        popup_window_title = "Claimed"
+        claimed_label = QLabel("Project claimed")
+        confirmation_window = popup_window.PopupWindow(claimed_label, popup_window_title)
+        confirmation_window.exec()
 
     def add_new_user(self):
         self.cursor.execute("""INSERT INTO user_records(claimed_email, fname, lname, title, dept)
@@ -117,8 +126,9 @@ class UserInfoWindow(QtWidgets.QWidget):
                                                     self.title_box.text(), self.dept_box.text()))
         self.connection.commit()
 
+        popup_window_title = "Entry Created"
         confirm_label = QLabel("Entry created. You may now claim a project")
-        popup = popup_window.PopupWindow(confirm_label)
+        popup = popup_window.PopupWindow(confirm_label, popup_window_title)
         popup.exec()
 
         # Need to put email into db before updating claimed email

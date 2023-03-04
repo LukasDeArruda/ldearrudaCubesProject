@@ -4,6 +4,7 @@ from PySide6.QtWidgets import QLabel, QLineEdit, QCheckBox, QRadioButton, QPushB
     QGridLayout, QApplication, QScrollArea, QSpacerItem, QDialog
 import sqlite3
 import database_setup
+import popup_window
 import user_info_window
 
 
@@ -331,6 +332,21 @@ class Window(QtWidgets.QWidget):
 
         if selected_response[0][12] == 1:
             self.project_claimed_box.setChecked(True)
+            self.db_cursor.execute("""SELECT * FROM responses 
+                                    INNER JOIN user_records ON responses.claimed_email = user_records.claimed_email
+                                    WHERE entryNum = ?""", (self.last_primary_key,))
+            claimed_entry = self.db_cursor.fetchall()
+            self.claimed_email.setText(claimed_entry[0][13])
+            self.claimed_title.setText(claimed_entry[0][14])
+            self.claimed_fname.setText(claimed_entry[0][15])
+            self.claimed_lname.setText(claimed_entry[0][16])
+            self.claimed_dept.setText(claimed_entry[0][17])
+        else:
+            self.claimed_email.setText("")
+            self.claimed_title.setText("")
+            self.claimed_fname.setText("")
+            self.claimed_lname.setText("")
+            self.claimed_dept.setText("")
 
     def reset_checkboxes(self):
         # Resets all checkboxes when a new entry is selected
@@ -357,16 +373,9 @@ class Window(QtWidgets.QWidget):
         self.user_info_window = user_info_window.UserInfoWindow(self.db_connection, self.db_cursor,
                                                                 self.last_primary_key)
         if self.project_claimed_box.isChecked():
-            already_claimed_window = QDialog()
-            already_claimed_window.setWindowTitle("Already Claimed")
-            claimed_layout = QVBoxLayout()
-            ok_button = QPushButton("Ok")
-            ok_button.clicked.connect(already_claimed_window.close)
+            popup_window_title = "Already Claimed"
             claimed_message = QLabel("This project has already been claimed")
-            claimed_layout.addWidget(claimed_message)
-            claimed_layout.addWidget(ok_button)
-            already_claimed_window.setLayout(claimed_layout)
-            already_claimed_window.show()
+            already_claimed_window = popup_window.PopupWindow(claimed_message, popup_window_title)
             already_claimed_window.exec()
         else:
             claim_query = """UPDATE responses SET claimed = 1 WHERE entryNum = (?)"""
