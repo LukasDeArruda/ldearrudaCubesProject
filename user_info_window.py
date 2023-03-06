@@ -88,6 +88,7 @@ class UserInfoWindow(QtWidgets.QWidget):
         if is_in_db[0][0] == 1:
             self.cursor.execute("""SELECT * FROM user_records WHERE claimed_email = ?""", (self.email_box.text(),))
             selected_entry = self.cursor.fetchall()
+            self.email_box.setStyleSheet("background-color: green")
 
             self.fname_box.setText(selected_entry[0][1])
             self.lname_box.setText(selected_entry[0][2])
@@ -96,6 +97,7 @@ class UserInfoWindow(QtWidgets.QWidget):
         else:
             popup_window_title = "Email Not Found"
             prompt_label = QLabel("Email not found. Please enter user information")
+            self.email_box.setStyleSheet("background-color: red")
             popup = popup_window.PopupWindow(prompt_label, popup_window_title)
             popup.exec()
             self.fname_box.setReadOnly(False)
@@ -125,10 +127,4 @@ class UserInfoWindow(QtWidgets.QWidget):
                             VALUES (?,?,?,?,?)""", (self.email_box.text(), self.fname_box.text(), self.lname_box.text(),
                                                     self.title_box.text(), self.dept_box.text()))
         self.connection.commit()
-
-        popup_window_title = "Entry Created"
-        confirm_label = QLabel("Entry created. You may now claim a project")
-        popup = popup_window.PopupWindow(confirm_label, popup_window_title)
-        popup.exec()
-
-        # Need to put email into db before updating claimed email
+        self.email_box.setStyleSheet("background-color: green")

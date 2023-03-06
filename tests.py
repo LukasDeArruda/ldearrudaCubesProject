@@ -71,12 +71,32 @@ def test_gui_population():
     assert test_window.spr2023_box.isChecked()
 
 
+def test_populate_user_data():
+    conn, cur = database_setup.open_db("testdb.db")
+    database_setup.create_table(cur)
+
+    conn.execute("""INSERT OR REPLACE INTO user_records VALUES(?,?,?,?,?)""", ("test@test.com", "fname", "lname",
+                                                                               "title", "department"))
+    conn.commit()
+
+    window = user_info_window.UserInfoWindow(conn, cur, 0)
+
+    window.email_box.setText("test@test.com")
+    window.add_email_to_db()
+
+    database_setup.close_db(conn)
+
+    assert window.fname_box.text() == "fname"
+    assert window.lname_box.text() == "lname"
+    assert window.title_box.text() == "title"
+    assert window.dept_box.text() == "department"
+
+
 def test_user_creation():
     conn, cur = database_setup.open_db("testdb.db")
     database_setup.create_table(cur)
 
     window = user_info_window.UserInfoWindow(conn, cur, 0)
-    window.show()
 
     test_entry = ("user@blank.com", "name1", "name2", "title", "dept")
 
@@ -92,26 +112,7 @@ def test_user_creation():
 
     cur.execute("""SELECT * FROM user_records WHERE claimed_email = ?""", ("user@blank.com",))
     test_response = cur.fetchall()
+    database_setup.close_db(conn)
 
     assert test_response[0] == test_entry
-
-
-def test_populate_user_data():
-    conn, cur = database_setup.open_db("testdb.db")
-    database_setup.create_table(cur)
-
-    conn.execute("""INSERT OR REPLACE INTO user_records VALUES(?,?,?,?,?)""", ("test@test.com", "fname", "lname", "title",
-                                                                    "department"))
-
-    window = user_info_window.UserInfoWindow(conn, cur, 0)
-    window.show()
-
-    window.email_box.setText("test@test.com")
-    window.add_email_to_db()
-
-    assert window.fname_box.text() == "fname"
-    assert window.lname_box.text() == "lname"
-    assert window.title_box.text() == "title"
-    assert window.dept_box.text() == "department"
-
 
