@@ -186,6 +186,8 @@ class Window(QtWidgets.QWidget):
             button_list[i] = QPushButton(db_responses[i][0] + ": " + db_responses[i][5])
             entry_list.addWidget(button_list[i])
             button_list[i].clicked.connect(self.show_full_information)
+            if db_responses[i][12] == 1:
+                button_list[i].setStyleSheet("background-color: red")
 
         # Will hold the details of one selected layout
         detailed_entry = QVBoxLayout()

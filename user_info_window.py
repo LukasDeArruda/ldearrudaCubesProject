@@ -121,7 +121,7 @@ class UserInfoWindow(QtWidgets.QWidget):
         confirmation_window.exec()
 
     def add_new_user(self):
-        self.cursor.execute("""INSERT INTO user_records(claimed_email, fname, lname, title, dept)
+        self.cursor.execute("""INSERT OR IGNORE INTO user_records(claimed_email, fname, lname, title, dept)
                             VALUES (?,?,?,?,?)""", (self.email_box.text(), self.fname_box.text(), self.lname_box.text(),
                                                     self.title_box.text(), self.dept_box.text()))
         self.connection.commit()
