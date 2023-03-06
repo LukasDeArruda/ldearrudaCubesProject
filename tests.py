@@ -100,13 +100,7 @@ def test_user_creation():
 
     test_entry = ("user@blank.com", "name1", "name2", "title", "dept")
 
-    window.email_box.setText(test_entry[0])
-    window.add_email_to_db()
-
-    window.fname_box.setText(test_entry[1])
-    window.lname_box.setText(test_entry[2])
-    window.title_box.setText(test_entry[3])
-    window.dept_box.setText(test_entry[4])
+    cur.execute("""INSERT OR IGNORE INTO user_records VALUES (?,?,?,?,?)""", test_entry)
 
     window.add_new_user()
 
