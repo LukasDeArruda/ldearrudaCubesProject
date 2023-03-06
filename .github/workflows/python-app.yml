@@ -49,4 +49,4 @@ jobs:
         echo 'api_key = "'$API_KEY'"' >> secrets.py
     - name: Test with pytest
       run: |
-        pytest tests/tests.py
+        pytest tests.py
